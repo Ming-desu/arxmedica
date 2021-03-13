@@ -51,7 +51,6 @@ class AnalyticsController extends BaseController
    */
   public function index(Request $request, Response $response): Response
   {
-    return $this->respondWithData($response, getenv('DATABASE_URL'));
     $this->logger->info('Dispatch from AnalyticsController::index started');
     $params = $request->getQueryParams();
 

@@ -1,0 +1,235 @@
+{% extends "/layouts/main.html.twig" %}
+
+{% block title %}
+  Quotations
+{% endblock %}
+
+{% block main %}
+  <div class="container">
+    <div class="row mb-4 align-items-center g-2">
+      <div class="col-md-7">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="h2 my-0">Quotation List</h1>
+          <a href="{{ base_url }}/quotations/new" class="btn btn-success d-flex align-items-center">
+            <i class="las la-plus mr-2"></i>
+            <span>New</span>
+          </a>
+        </div>
+      </div>
+      <form action="{{ base_url }}/quotations" id="form-search" class="input-group col">
+        <input type="text" class="form-control" placeholder="Search something..." name="q" aria-label="Search" aria-describedby="search-button">
+        <button type="submit" class="btn btn-secondary d-flex align-items-center" id="search-button"><i class="las la-search m-0 d-block"></i></button>
+      </form>
+    </div>
+
+    <div class="data-cards">
+      <div class="row quotations">
+        <!-- <div class="col-md-5 col-lg-4 mb-4">
+          <div class="card">
+            <div class="card-body">
+              <div class="card-title">
+                <h5>The Outcast of COVID-19</h5>
+                <p class="card-text text-muted my-0">
+                  <small>— 2004-8555-ABCD</small>
+                </p>
+                <p class="card-text text-muted lh-sm">
+                  <small>COVID-19 front-liners general medicine and equipments</small>
+                </p>
+              </div>
+              <div class="dropdown-divider my-3"></div>
+              <div class="recipient">
+                <a href="#recipient-2004-8555-ABCD" class="link-dark card-title d-block h5 text-decoration-none d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="recipient-2004-8555-ABCD">Recipient details <i class="las la-angle-down"></i></a>
+                <div class="collapse" id="recipient-2004-8555-ABCD">
+                  <div class="mb-4">
+                    <p class="card-text text-muted d-flex my-0">
+                      <i class="las la-calendar la-1x mt-1 mr-2"></i>
+                      <small>Jan. 06, 2020</small>
+                    </p>
+                    <p class="card-text text-muted d-flex my-0">
+                      <i class="las la-map-marker la-1x mt-1 mr-2"></i>
+                      <small>San Pablo City, Laguna</small>
+                    </p>
+                  </div>
+                  <div class="mb-2">
+                    <h6 class="my-0">Kimbert Maldonado</h6>
+                    <p class="card-text">
+                      <small class="text-muted">— City Mayor</small>
+                    </p>
+                  </div>
+                  <div class="mb-2 text-right">
+                    <h6 class="my-0">John Paul Monedo</h6>
+                    <p class="card-text">
+                      <small class="text-muted">— Secretary</small>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="dropdown-divider my-3"></div>
+              <div class="details">
+                <a href="#details-2004-8555-ABCD" class="link-dark card-title d-block h5 text-decoration-none d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="details-2004-8555-ABCD">Quotation details <i class="las la-angle-down"></i></a>
+                <div class="collapse" id="details-2004-8555-ABCD">
+                  <p class="card-text text-muted d-flex my-0">
+                    <i class="las la-user la-1x mt-1 mr-2"></i>
+                    <small>Joshua Ming Ricohermoso</small>
+                  </p>
+                  <p class="card-text text-muted d-flex my-0">
+                    <i class="las la-calendar la-1x mt-1 mr-2"></i>
+                    <small>Jan. 04, 2020 10:44:28 PM</small>
+                  </p>
+                </div>
+              </div>
+              <div class="text-right mt-4">
+                <a href="#" class="btn btn-light text-primary">Edit</a>
+              </div>
+            </div>
+          </div>
+        </div> -->
+      </div>
+      <div class="loading d-none">
+        <h5>Loading...</h5>
+        <p><i class="las la-spinner la-spin la-2x m-0"></i></p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script>
+    const quotations = document.querySelector('.quotations');
+    const masonry = new Masonry(quotations, {
+      percentPosition: true,
+      horizontalOrder: true
+    });
+    const formSearch = document.getElementById('form-search');
+
+    let url = '{{ base_url }}/quotations?q=';
+
+    const handleFormSubmit = async function(e) {
+      e.preventDefault();
+
+      let query = encodeURI(this.q.value);
+      url = `{{ base_url }}/quotations?q=${query}`;
+
+      quotations.querySelector('.no-item')?.remove();
+      await fetch(url, quotations, renderItem);
+    };
+
+    const renderItem = item => {
+      let div = document.createElement('div');
+      div.className = "col-md-5 col-lg-4 mb-4";
+
+      let recipients = `
+        <div class="mb-4">
+          <p class="card-text text-muted d-flex my-0">
+            <i class="las la-calendar la-1x mt-1 mr-2"></i>
+            <small>${item.date_issued}</small>
+          </p>
+          <p class="card-text text-muted d-flex my-0">
+            <i class="las la-map-marker la-1x mt-1 mr-2"></i>
+            <small>${item.recipients[0].address.street}, ${item.recipients[0].address.municipality}, ${item.recipients[0].address.province}</small>
+          </p>
+        </div>
+        <div class="mb-2">
+          <h6 class="my-0">${item.recipients[0].first_name} ${item.recipients[0].last_name}</h6>
+          <p class="card-text">
+            <small class="text-muted">— ${item.recipients[0].position}</small>
+          </p>
+        </div>
+      `;
+
+      if (item.recipients.length > 1) {
+        recipients += `
+          <div class="mb-2 text-right">
+            <h6 class="my-0">${item.recipients[1].first_name} ${item.recipients[1].last_name}</h6>
+            <p class="card-text">
+              <small class="text-muted">— ${item.recipients[1].position}</small>
+            </p>
+          </div>
+        `;
+      }
+
+      let template = `
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">
+              <h5>${item.project_title}</h5>
+              <p class="card-text text-muted my-0">
+                <small>— ${item.pr_no}</small>
+              </p>
+              <p class="card-text text-muted lh-sm">
+                <small>${item.project_description}</small>
+              </p>
+            </div>
+            <div class="dropdown-divider my-3"></div>
+            <div class="recipient">
+              <a href="#recipient-${item.id}" class="link-dark card-title d-block h5 text-decoration-none d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="recipient-${item.id}">Recipient details <i class="las la-angle-down"></i></a>
+              <div class="collapse" id="recipient-${item.id}">
+                ${recipients}
+              </div>
+            </div>
+            <div class="dropdown-divider my-3"></div>
+            <div class="details">
+              <a href="#details-${item.id}" class="link-dark card-title d-block h5 text-decoration-none d-flex justify-content-between align-items-center collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="details-${item.id}">Quotation details <i class="las la-angle-down"></i></a>
+              <div class="collapse" id="details-${item.id}">
+                <p class="card-text text-muted d-flex my-0">
+                  <i class="las la-user la-1x mt-1 mr-2"></i>
+                  <small>${item.representative.first_name} ${item.representative.last_name}</small>
+                </p>
+                <p class="card-text text-muted d-flex my-0">
+                  <i class="las la-calendar la-1x mt-1 mr-2"></i>
+                  <small>${item.updated_at ?? item.created_at}</small>
+                </p>
+              </div>
+            </div>
+            <div class="text-right mt-4">
+              <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                  Actions
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li><a class="dropdown-item" href="{{ base_url }}/quotations/${item.id}/edit">Edit</a></li>
+                  <li><a class="dropdown-item" href="{{ base_url }}/analytics/print?qid=${item.id}" target="_blank">Print Canvas</a></li>
+                  <li><a class="dropdown-item" href="{{ base_url }}/quotations/${item.id}/print" target="_blank">Print Quotation</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      div.innerHTML = template;
+      quotations.append(div);
+
+      masonry.appended(div);
+      masonry.layout();
+    };
+
+    formSearch.addEventListener('submit', handleFormSubmit);
+    fetch(url, quotations, renderItem);
+
+    window.addEventListener('click', function(e) {
+      let target = e.target;
+      
+      if (target.matches('a'))
+        target = target.closest('a');
+
+      if (target.closest('a'))
+        target = target.closest('a');
+      
+      if (
+        target.hasAttribute('data-toggle') && 
+        target.getAttribute('data-toggle') === 'collapse' && 
+        target.closest('.quotations')) {
+        e.preventDefault();
+        target.classList.toggle('rotate');
+        setTimeout(() => masonry.layout(), 400);
+      }
+    });
+
+    window.addEventListener('scroll', () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        scroll(url, renderItem);
+      }
+    });
+  </script>
+{% endblock %}

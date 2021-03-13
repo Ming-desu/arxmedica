@@ -1,0 +1,110 @@
+{% extends "/layouts/main.html.twig" %}
+
+{% block title %}
+  Accounts
+{% endblock %}
+
+{% block main %}
+  <div class="container">
+    <div class="row mb-4 align-items-center g-2">
+      <div class="col-md-7">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="h2 my-0">Account List</h1>
+          <a href="{{ base_url }}/accounts/new" class="btn btn-success d-flex align-items-center">
+            <i class="las la-plus mr-2"></i>
+            <span>New</span>
+          </a>
+        </div>
+      </div>
+      <form action="{{ base_url }}/products" id="form-search" class="input-group col">
+        <input type="text" class="form-control" placeholder="Search something..." name="q" aria-label="Search" aria-describedby="search-button">
+        <button type="submit" class="btn btn-secondary d-flex align-items-center" id="search-button"><i class="las la-search m-0 d-block"></i></button>
+      </form>
+    </div>
+
+    <div class="data-cards">
+      <div class="row accounts"></div>
+      <div class="loading d-none">
+        <h5>Loading...</h5>
+        <p><i class="las la-spinner la-spin la-2x m-0"></i></p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script>
+    const accounts = document.querySelector('.accounts');
+    const masonry = new Masonry(accounts, {
+      percentPosition: true,
+      horizontalOrder: true
+    });
+    const formSearch = document.getElementById('form-search');
+
+    let url = '{{ base_url }}/accounts?q=';
+
+    const handleFormSubmit = async function(e) {
+      e.preventDefault();
+
+      let query = encodeURI(this.q.value);
+      url = `{{ base_url }}/accounts?q=${query}`;
+
+      await fetch(url, accounts, renderItem);
+    };
+
+    const renderItem = item => {
+      accounts.querySelector('.no-item')?.remove();
+
+      let div = document.createElement('div');
+      div.className = "col-md-4 col-lg-3 mb-4";
+
+      let bg = 'bg-success';
+
+      if (item.status.toLowerCase() === 'inactive')
+        bg = 'bg-secondary';
+      else if (item.status.toLowerCase() === 'archived')
+        bg = 'bg-danger';
+
+      let imgURL;
+
+      if (item.picture === null)
+        imgURL = item.sex == '1' ? '/img/icon-male.png' : '/img/icon-female.png';
+      else
+        imgURL = `/uploads/${item.picture.file_name}`;
+
+      let template = `
+        <div class="card">
+          <div class="card-body">
+            <img 
+            src="{{ base_url }}${imgURL}" 
+            width="60" height="60" alt="" 
+            class="rounded-circle mb-2"
+            style="object-fit: cover; object-position: center;">
+            <p class="card-text">
+              <h5 class="m-0">${item.first_name} ${item.last_name}</h5>
+              <small class="text-muted">${item.username}<span class="badge rounded-pill ${bg} ml-2">${item.status}</span></small>
+            </p>
+            <div class="text-right">
+              <a href="{{ base_url }}/accounts/${item.id}/edit" class="btn btn-light text-primary">Edit</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      div.innerHTML = template;
+      accounts.appendChild(div);
+
+      masonry.appended(div);
+      masonry.layout();
+    };
+
+    formSearch.addEventListener('submit', handleFormSubmit);
+    fetch(url, accounts, renderItem);
+
+    window.addEventListener('scroll', () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        scroll(url, renderItem);
+      }
+    });
+  </script>
+{% endblock %} 

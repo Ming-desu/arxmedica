@@ -1,0 +1,121 @@
+{% extends "/layouts/base.html" %}
+
+{% block title %}
+  Quotation Print
+{% endblock %}
+
+{% block content %}
+  <div class="container py-4">
+    <div align="center">
+      <img src="/img/logo-banner.png" class="img-fluid" alt="">
+    </div><br>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <p>{{ quotation.date_issued | date("F d, Y", "Asia/Manila") }}</p>
+      <button type="button" class="btn btn-success btn-print d-flex align-items-center d-print-none" onclick="javascript:void(0); window.print()">
+        <i class="las la-print mr-2"></i>
+      </button>
+    </div>
+    <p>
+      <strong>{{ (quotation.recipients[0].first_name ~ ' ' ~ quotation.recipients[0].last_name) | upper }}</strong><br>
+      {{ quotation.recipients[0].position }}<br>
+      {{ quotation.recipients[0].address | slice(1) | join(', ') }}
+    </p>
+
+    {% if quotation.recipients[1] %}
+      <p align="right" class="m-0"><strong>{{ (quotation.recipients[1].first_name ~ ' ' ~ quotation.recipients[1].last_name) | upper }}</strong> <br>{{ quotation.recipients[1].position }}</p>
+    {% endif %}
+
+    <p>Dear {{ quotation.recipients[0].position }},</p>
+    <p>
+      Greetings!<br>
+      We are pleased to submit our firm proposal for the "<strong>{{ quotation.project_title }}</strong>" for the use of "<em>{{ quotation.project_description }}</em>":
+    </p>
+
+    <table width="100%" class="table table-bordered">
+      <thead>
+        <tr>
+          <th align="left">No.</th>
+          <th align="left">Qty.</th>
+          <th align="left">Unit</th>
+          <th class="text-center" align="center">Item Description</th>
+          <th class="text-right" align="right">Unit Price</th>
+          <th class="text-right" align="right">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set sum = 0 %}
+        {% set total = 0 %}
+        {% for item in quotation.items %}
+          {% set index = loop.index0 %}
+          {% set total = total + (item.unit_cost * item.quantity) %}
+          {% if loop.first %}
+            {% set sum = sum + (item.unit_cost * item.quantity) %}
+            <tr class="text-center">
+              <th align="center" colspan="6">{{ item.category }}</th>
+            </tr>
+          {% else %}
+            {% if quotation.items[index].category is not same as(quotation.items[index - 1].category) %}
+              <tr class="text-right">
+                <th align="right" colspan="5">Sub-Total:</th>
+                <th align="right">₱ {{ sum | number_format(2) }}</th>
+              </tr>
+              {% set sum = 0 %}
+              <tr class="text-center">
+                <th align="center" colspan="6">{{ item.category }}</th>
+              </tr>
+            {% endif %}
+            {% set sum = sum + (item.unit_cost * item.quantity) %}
+          {% endif %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.unit }}</td>
+            <td>{{ item.description }}</td>
+            <td align="right">₱ {{ item.unit_cost | number_format(2) }}</td>
+            <td align="right">₱ {{ (item.unit_cost * item.quantity) | number_format(2) }}</td>
+          </tr>
+        {% endfor %}
+        <tr class="text-right">
+          <th align="right" colspan="5">Sub-Total:</th>
+          <th align="right">₱ {{ sum | number_format(2) }}</th>
+        </tr>
+        <tr>
+          <td colspan="6">-</td>
+        </tr>
+        <tr class="text-right">
+          <th align="right" colspan="5" class="text-uppercase">Grand Total:</th>
+          <th align="right">₱ {{ total | number_format(2) }}</th>
+        </tr>
+      </tbody>
+    </table><br>
+
+    <p>Amount in Words:</p>
+    <p align="center" class="my-4"><strong><em>{{ total | currency }}</em></strong></p>
+
+    <strong>Terms and Conditions:</strong>
+    <ol class="mb-4" style="font-style: italic;">
+      <li>Price is tax inclusive (12% VAT)</li>
+      <li>Payment Terms: Approved government mode of payment</li>
+      <li>Warranty: Three (3) months from the date of delivery</li>
+      <li>Delivery Lead-time: Fifteen (15) to Thirty (30) working days upon receipt of Purchase Order</li>
+      <li>Validity: Thirty (30) days only</li>
+    </ol>
+
+    <p>We hope that the above proposal would merit your most valued approval. Should you have any further inquiry concerning this quotation, please do not hesitate to contact us <strong>0949-436-0152</strong>.</p>
+
+    <p>
+      Very truly yours,<br>
+      <strong>ARXMEDICA MARKETING</strong>
+    </p>
+
+    <p>
+      <strong>{{ (quotation.representative.first_name ~ ' ' ~ quotation.representative.last_name) | upper }}</strong><br>
+      Authorized Representative
+    </p>
+
+    <p align="right">
+      <strong><em>NO. 78 F. LAURENA STREET POBLACION<br>BRGY. I, TANAUAN CITY, BATANGAS 4232</em></strong>
+    </p>
+  </div>
+{% endblock %}

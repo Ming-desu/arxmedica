@@ -1,0 +1,14 @@
+{% extends "/layouts/base.html" %}
+
+{% block title %}
+  Page not found
+{% endblock title %}
+
+{% block content %}
+  <div class="container py-4 text-center">
+    <img src="/img/undraw-page-not-found.svg" width="600" class="img-fluid" alt="">
+    <h1 class="h2 mt-5">Page not found!</h1>
+    <p class="text-muted">Sorry, it seems that the page you requested is either broken, moved, or does not exist.</p>
+    <a href="{{ base_url }}" class="btn btn-primary">Go Back</a>
+  </div>
+{% endblock %}

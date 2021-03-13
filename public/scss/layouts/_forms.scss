@@ -1,0 +1,36 @@
+.form-login, .form-register {
+  width: 400px;
+  margin: 4rem auto;
+  text-align: center;
+}
+
+.form-login {
+  p {
+    color: $darkGray;
+    margin: 1rem 0;
+  }
+
+  a {
+    margin: 0 0 1rem 0;
+  }
+}
+
+.form-register {
+  p {
+    color: $darkGray;
+    margin: 1rem 0;
+  }
+
+  h5 {
+    margin: 0 0 .5rem 0;
+    text-align: left;
+  }
+
+  .flex-2 {
+    gap: 1rem;
+  }
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}

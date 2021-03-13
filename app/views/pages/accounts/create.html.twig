@@ -1,0 +1,226 @@
+{% extends "/layouts/main.html.twig" %}
+
+{% block title %}
+  Accounts
+{% endblock %}
+
+{% block main %}
+  <div class="container">
+    <h1 class="h2">Add new account</h1>
+    <p class="text-muted">Fill up all the required fields.</p>
+  
+    <form action="{{ base_url }}/accounts/new" name="accounts" class="row" method="POST" novalidate>
+      <div class="col-md-6 col-lg-7 mb-4">
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="card-title">
+              <h5 class="m-0">General Information</h5>
+              <p class="card-text">
+                <small class="text-muted">Basic information about the user such as name, sex, and others.</small>
+              </p>
+            </div>
+            <div id="alert"></div>
+            <div class="row">
+              <div class="col-lg-6 mb-2">
+                <label for="first_name" class="form-label">First name</label>
+                <input type="text" id="first_name" name="first_name" class="form-control" placeholder="Johnny">
+              </div>
+              <div class="col-lg-6 mb-2">
+                <label for="last_name" class="form-label">Last name</label>
+                <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Smith">
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <div class="form-check mr-2">
+                <input type="radio" id="male" class="form-check-input" name="sex" value="1" checked>
+                <label for="male" class="form-check-label">Male</label>
+              </div>
+              <div class="form-check">
+                <input type="radio" id="female" class="form-check-input" name="sex" value="0">
+                <label for="female" class="form-check-label">Female</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">
+              <h5 class="m-0">Credentials Information</h5>
+              <p class="card-text">
+                <small class="text-muted">The information to use in order to gain access in the system.</small>
+              </p>
+            </div>
+            <div class="row">
+              <div class="col-lg-6 mb-2">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="@johnny12">
+              </div>
+              <div class="w-100"></div>
+              <div class="col-lg-6 mb-2">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                  <input type="password" id="password" name="password" class="form-control password password-random border-right-0">
+                  <span class="input-group-text bg-white">
+                    <i class="las la-eye-slash btn-toggle-password m-0"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="col-lg-6 mb-2">
+                <label for="password_confirm" class="form-label">Confirm Password</label>
+                <input type="password" id="password_confirm" name="password_confirm" class="form-control password password-random">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-5 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">
+              <h5 class="m-0">User Permissions</h5>
+              <p class="card-text">
+                <small class="text-muted">Control the modules that the user can access.</small>
+              </p>
+            </div>
+            <label class="form-label">Modules</label>
+            <div class="row">
+              <div class="col-lg-6 mb-2">
+                <div class="form-check">
+                  <input type="checkbox" id="permission_stores" class="form-check-input" name="permissions[]" value="stores">
+                  <label for="permission_stores" class="form-check-label">Stores</label>
+                </div>
+              </div>
+              <div class="col-lg-6 mb-2">
+                <div class="form-check">
+                  <input type="checkbox" id="permission_products" class="form-check-input" name="permissions[]" value="products">
+                  <label for="permission_products" class="form-check-label">Inventory</label>
+                </div>
+              </div>
+              <div class="col-lg-6 mb-2">
+                <div class="form-check">
+                  <input type="checkbox" id="permission_quotations" class="form-check-input" name="permissions[]" value="quotations">
+                  <label for="permission_quotations" class="form-check-label">Quotations</label>
+                </div>
+              </div>
+              <div class="col-lg-6 mb-2">
+                <div class="form-check">
+                  <input type="checkbox" id="permission_expenses" class="form-check-input" name="permissions[]" value="expenses">
+                  <label for="permission_expenses" class="form-check-label">Expenses</label>
+                </div>
+              </div>
+              <div class="col-lg-6 mb-2">
+                <div class="form-check">
+                  <input type="checkbox" id="permission_accounts" class="form-check-input" name="permissions[]" value="accounts">
+                  <label for="permission_accounts" class="form-check-label">Accounts</label>
+                </div>
+              </div>
+              <div class="col-lg-6 mb-2">
+                <div class="form-check">
+                  <input type="checkbox" id="permission_settings" class="form-check-input" name="permissions[]" value="settings">
+                  <label for="permission_settings" class="form-check-label">Settings</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-right">
+        <a href="{{ base_url }}/accounts" class="btn btn-light mr-2">Cancel</a>
+        <button type="submit" class="btn btn-primary" name="submit"><i class="las la-spinner la-spin la-1x mr-2"></i>Create Account</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script src="/js/helpers/form-password.js"></script>
+  <script>
+    const form = document.forms.accounts;
+
+    validate.validators.presence.message = "must not be left empty.";
+    const constraints = {
+      first_name: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      last_name: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      sex: {
+        presence: true
+      },
+      username: {
+        presence: {
+          allowEmpty: false
+        },
+        length: {
+          minimum: 4,
+          maximum: 20
+        },
+        format: {
+          pattern: "[a-z0-9_]+",
+          flags: "i",
+          message: "can only contain a-z, 0-9, and underscore"
+        }
+      },
+      password: {
+        length: {
+          minimum: 8,
+          maximum: 32
+        }
+      },
+      password_confirm: {
+        equality: {
+          attribute: "password",
+          message: "^The passwords does not match"
+        }
+      }
+    }
+
+    const handleFormSubmit = async function(e)
+    {
+      e.preventDefault();
+
+      closeAlert();
+      let errors = validate(this, constraints, {format: 'flat'});
+      showError(errors || []);
+
+      if (errors)
+        return false;
+
+      this.submit.disabled = true;
+      try {
+        let permissions = [];
+        this.querySelectorAll('input[name="permissions[]"]:checked').forEach(input => permissions.push(input.value));
+        
+        const res = await create(`{{ base_url }}/accounts/new`, {
+          first_name: this.first_name.value,
+          last_name: this.last_name.value,
+          sex: this.sex.value,
+          username: this.username.value,
+          password: this.password.value,
+          permissions: permissions.join(',')
+        });
+        
+        this.reset();
+      }
+      catch(err) {}
+      this.submit.disabled = false;
+    };
+
+    form.addEventListener('submit', handleFormSubmit);
+  </script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "/layouts/base.html" %}
+
+{% block title %}
+  Canvas Print
+{% endblock %}
+
+{% block content %}
+  <div class="container py-4">
+    <div align="center">
+      <img src="/img/logo-banner.png" class="img-fluid" alt="">
+    </div><br>
+    
+    <div class="d-flex justify-content-between align-items-center my-4">
+      <h1 class="h2">Cost Overview</h1>
+      <button type="button" class="btn btn-success btn-print d-flex align-items-center d-print-none" onclick="javascript:void(0); window.print()">
+        <i class="las la-print mr-2"></i>
+      </button>
+    </div>
+    <table width="100%" class="table table-bordered">
+      <thead>
+        <tr>
+          <th align="left">Product Description</th>
+          <th align="left">Store Details</th>
+          <th class="text-right" align="right">Unit Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in canvas %}
+          {% set index = loop.index %}
+          {% for x in row.canvas %}
+            <tr class="{{ index % 2 == 0 ? 'even' : 'odd' }}">
+              {% if loop.first %}
+                <td class="align-top" rowspan="{{ row.canvas | length }}">{{ row.brand }} {{ row.description }} ({{ row.unit }})</td>
+              {% endif %}
+              <td>{{ x.name }}</td>
+              <td class="text-right" align="right">₱ {{ x.unit_cost }}</td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

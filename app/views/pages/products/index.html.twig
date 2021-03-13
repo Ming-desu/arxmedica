@@ -1,0 +1,99 @@
+{% extends "/layouts/main.html.twig" %}
+
+{% block title %}
+  Inventory
+{% endblock %}
+
+{% block main %}
+  <div class="container">
+    <div class="row mb-4 align-items-center g-2">
+      <div class="col-md-7">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="h2 my-0">Product List</h1>
+          <a href="{{ base_url }}/products/new" class="btn btn-success d-flex align-items-center">
+            <i class="las la-plus mr-2"></i>
+            <span>New</span>
+          </a>
+        </div>
+      </div>
+      <form action="{{ base_url }}/products" id="form-search" class="input-group col">
+        <input type="text" class="form-control" placeholder="Search something..." name="q" aria-label="Search" aria-describedby="search-button">
+        <button type="submit" class="btn btn-secondary d-flex align-items-center" id="search-button"><i class="las la-search m-0 d-block"></i></button>
+      </form>
+    </div>
+
+    <div class="data-cards">
+      <div class="row products"></div>
+      <div class="loading d-none">
+        <h5>Loading...</h5>
+        <p><i class="las la-spinner la-spin la-2x m-0"></i></p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script>
+    const products = document.querySelector('.products');
+    const masonry = new Masonry(products, {
+      percentPosition: true,
+      horizontalOrder: true
+    });
+    const formSearch = document.getElementById('form-search');
+    
+    let url = '{{ base_url }}/products?q=';
+
+    const handleFormSearchSubmit = async function(e)
+    {
+      e.preventDefault();
+
+      let query = encodeURI(this.q.value);
+      url = `{{ base_url }}/products?q=${query}`;
+
+      await fetch(url, products, renderItem);
+    };
+
+    const renderItem = (item) => 
+    {
+      products.querySelector('.no-item')?.remove();
+
+      let div = document.createElement('div');
+      div.className = "col-md-4 col-lg-3 mb-4";
+      let template = `
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">
+              <h5 class="my-0">${item.brand === '' ? 'Generic' : item.brand}</h5>
+              <p class="card-text text-muted">
+                <span>${item.description}</span>
+                <span class="badge rounded-pill bg-info">${item.unit}</span> 
+              </p>
+            </div>
+            <p class="card-text">
+              <small class="text-muted">— ${item.category}</small>
+            </p>
+            <div class="text-right">
+              <a href="{{ base_url }}/products/${item.id}/edit" class="btn btn-light text-primary">Edit</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      div.innerHTML = template;
+      products.appendChild(div);
+
+      masonry.appended(div);
+      masonry.layout();
+    };
+
+    formSearch.addEventListener('submit', handleFormSearchSubmit);
+
+    fetch(url, products, renderItem);
+
+    window.addEventListener('scroll', () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        scroll(url, renderItem);
+      }
+    });
+  </script>
+{% endblock %}

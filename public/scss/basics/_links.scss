@@ -1,0 +1,11 @@
+.link {
+  transition: all .5s;
+
+  &-primary {
+    color: $blue;
+
+    &:hover {
+      color: $blue-100;
+    }
+  }
+}

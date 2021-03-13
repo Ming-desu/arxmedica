@@ -1,0 +1,45 @@
+{
+    "name": "ming/slim-boilerplate",
+    "description": "Slim Skeleton modified boilerplate",
+    "keywords": [
+        "microframework",
+        "rest",
+        "router",
+        "psr7"
+    ],
+    "homepage": "http://github.com/slimphp/Slim-Skeleton",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ming-desu",
+            "email": "joshuaming.jm@gmail.com"
+        }
+    ],  
+    "require": {
+        "php": "^7.2.5",
+        "ext-json": "*",
+        "atk4/dsql": "^2.2",
+        "firebase/php-jwt": "^5.2",
+        "fzaninotto/faker": "^1.9",
+        "monolog/monolog": "^2.0",
+        "php-di/slim-bridge": "^3.0",
+        "robmorgan/phinx": "^0.12.3",
+        "slim/flash": "^0.4.0",
+        "slim/psr7": "^1.1",
+        "slim/slim": "4.*",
+        "slim/twig-view": "^3.0",
+        "vlucas/phpdotenv": "^5.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "config": {
+        "process-timeout": 0,
+        "sort-packages": true
+    },
+    "scripts": {
+        "start": "clear && php -S localhost:8080 -t public/"
+    }
+}

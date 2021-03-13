@@ -1,0 +1,406 @@
+{% extends "/layouts/main.html.twig" %}
+
+{% block title %}
+  Store
+{% endblock %}
+
+{% block main %}
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-start">
+      <div class="store-header">
+        <h1 class="h2 m-0">{{ store.name }} Products</h1>
+        <p class="m-0">
+          <small class="text-muted">{{ [store.address.street, store.address.municipality, store.address.province]|join(', ') }}</small>
+        </p>
+      </div>
+      <a href="{{ base_url }}/stores/{{ store.id }}/edit" class="btn btn-light text-primary d-flex align-items-center">
+        <i class="las la-pen mr-2"></i>
+        <span>Edit</span>
+      </a>
+    </div>
+    <div class="dropdown-divider my-4"></div>
+    <div class="row mb-4 align-items-center g-2">
+      <div class="col-md-7">
+        <div class="d-flex justify-content-between align-items-center">
+          <div></div>
+          <a href="{{ base_url }}/stores/{{ store.id }}/new" class="btn btn-success d-flex align-items-center" role="button" data-toggle="modal" data-target="#modal-store-product-add">
+            <i class="las la-plus mr-2"></i>
+            <span>New</span>
+          </a>
+        </div>
+      </div>
+      <form action="{{ base_url }}/stores/{{ store.id }}/products" id="form-search" class="input-group col">
+        <input type="text" class="form-control" placeholder="Search something..." name="q" aria-label="Search" aria-describedby="search-button">
+        <button type="submit" class="btn btn-secondary d-flex align-items-center" id="search-button"><i class="las la-search m-0 d-block"></i></button>
+      </form>
+    </div>
+
+    <div class="data-cards">
+      <div class="row store-products"></div>
+      <div class="loading d-none">
+        <h5>Loading...</h5>
+        <p><i class="las la-spinner la-spin la-2x m-0"></i></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Modal -->
+  <div class="modal fade" id="modal-store-product-add" tabindex="-1" aria-labelledby="modal-store-product-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-store-product-title">Add new store product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ base_url }}/stores/{{ store.id }}/products/new" id="form-store-product-add" method="POST" novalidate>
+          <div class="modal-body">
+            <div id="alert"></div>
+            <input type="hidden" name="store_id" value="{{ store.id }}">
+            <div class="form-group mb-2">
+              <label for="product">Product details</label>
+              <input type="text" id="product" list="datalist-products" class="form-control" name="product" placeholder="Type something to search...">
+              <datalist id="datalist-products"></datalist>
+            </div>
+            <div class="row">
+              <div class="form-group col-lg-5">
+                <label for="unit_cost">Unit cost</label>
+                <div class="input-group">
+                  <span class="input-group-text">₱</span>
+                  <input type="number" id="unit_cost" class="form-control" name="unit_cost" placeholder="0.00">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer text-right">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" name="submit"><i class="las la-spinner la-spin la-1x mr-2"></i>Create Store Product</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- End of Add Modal -->
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="modal-store-product-edit" tabindex="-1" aria-labelledby="modal-store-product-title-edit" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-store-product-title-edit">Edit existing store product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{{ base_url }}/stores/{{ store.id }}/products/update" id="form-store-product-edit" method="POST" novalidate>
+          <div class="modal-body">
+            <div id="alert"></div>
+            <input type="hidden" name="id">
+            <input type="hidden" name="store_id" value="{{ store.id }}">
+            <div class="form-group mb-2">
+              <label for="product_edit">Product details</label>
+              <input type="text" id="product_edit" list="datalist-products" class="form-control" name="product" placeholder="Type something to search..." readonly>
+            </div>
+            <div class="row">
+              <div class="form-group col-lg-5">
+                <label for="unit_cost_edit">Unit cost</label>
+                <div class="input-group">
+                  <span class="input-group-text">₱</span>
+                  <input type="number" id="unit_cost_edit" class="form-control" name="unit_cost" placeholder="0.00">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-danger btn-delete btn-with-loading"><i class="las la-spinner la-spin la-1x mr-2"></i>Delete</button>
+            <div>
+              <button type="button" class="btn btn-light" data-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary" name="submit"><i class="las la-spinner la-spin la-1x mr-2"></i>Save Changes</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- End of Edit Modal -->
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script>
+    const storeProducts = document.querySelector('.store-products');
+    const masonry = new Masonry(storeProducts, {
+      percentPosition: true,
+      horizontalOrder: true
+    });
+    const formSearch = document.getElementById('form-search');
+    const formStoreProductAdd = document.getElementById('form-store-product-add');
+    const formStoreProductEdit = document.getElementById('form-store-product-edit');
+    const products = document.getElementById('datalist-products');
+    const modalStoreProductAdd = document.getElementById('modal-store-product-add');
+    const modalStoreProductEdit = document.getElementById('modal-store-product-edit');
+    const btnDelete = document.querySelector('.btn-delete');
+
+    let datalistProducts = [];
+    let datalistProductItems = [];
+
+    validate.validators.presence.message = "must not be left empty.";
+    const constraints = {
+      product: {
+        presence: {
+          allowEmpty: false
+        },
+        inclusion: {
+          message: "^Product %{value} not found. Choose one that are present in the selection."
+        }
+      },
+      unit_cost: {
+        presence: {
+          allowEmpty: false
+        },
+        numericality: {
+          greaterThan: 0
+        }
+      }
+    };
+
+    // Modal Events
+    const resetModalFormHide = function() {
+      this.querySelector('form').reset();
+      closeAlert();
+    };
+
+    modalStoreProductAdd.addEventListener('hidden.bs.modal', resetModalFormHide);
+    modalStoreProductEdit.addEventListener('hidden.bs.modal', resetModalFormHide);
+
+    const shownModalHandler = function(e) {
+      let form = this.querySelector('form');
+      form.id.value = e.relatedTarget.getAttribute('data-id');
+      form.product.value = e.relatedTarget.getAttribute('data-product');
+      form.unit_cost.value = e.relatedTarget.getAttribute('data-unit_cost');
+      form.unit_cost.focus();
+    };
+
+    modalStoreProductEdit.addEventListener('shown.bs.modal', shownModalHandler);
+
+    // End Modal Events
+
+    // Form Add
+    const handleFormStoreProductAddSubmit = async function(e) {
+      e.preventDefault();
+      
+      closeAlert();
+      let errors = validate(this, constraints, {format: 'flat'});
+      showError(errors || [], this);
+
+      if (errors)
+        return;
+
+      this.submit.disabled = true;
+      try {
+        let index = datalistProductItems.indexOf(this.product.value);
+        let product_id = datalistProducts[index].id;
+
+        const item = await create(this.action, {
+          store_id: this.store_id.value,
+          product_id,
+          unit_cost: this.unit_cost.value
+        });
+
+        response.push(item);
+        renderItem(item);
+                  
+        // Close the current modal
+        bootstrap.Modal.getInstance(modalStoreProductAdd)?.hide();
+      }
+      catch(err) {
+        openAlert(err.response.data.error.description, this);
+      }
+      this.submit.disabled = false;
+    };
+
+    formStoreProductAdd.addEventListener('submit', handleFormStoreProductAddSubmit);
+    // End Form Add
+
+    // Form Edit
+    const handleFormStoreProductEditSubmit = async function(e) {
+      e.preventDefault();
+
+      let constraints = {
+        unit_cost: {
+          presence: {
+            allowEmpty: false
+          },
+          numericality: {
+            greaterThan: 0
+          }
+        }
+      };
+
+      closeAlert();
+      let errors = validate(this, constraints, {format: 'flat'});
+      showError(errors || [], this);
+
+      if (errors)
+        return;
+
+      this.submit.disabled = true;
+      try {
+        let data = {
+          id: this.id.value,
+          unit_cost: this.unit_cost.value
+        }
+
+        const item = await update(this.action, data);
+
+        response.forEach((data, index) => {
+          if (data.id === item.id) {
+            data.unit_cost = item.unit_cost;
+            let card = document.querySelectorAll('.store-products .card')[index];
+            card.querySelector('.unit_cost').innerText = `₱ ${item.unit_cost}`;
+            card.querySelector('a').setAttribute('data-unit_cost', item.unit_cost.replace(',', ''));
+            
+            // Update UI
+            masonry.layout();
+          }
+        });
+
+        // Close the current modal
+        bootstrap.Modal.getInstance(modalStoreProductEdit)?.hide();
+      }
+      catch(err) {
+        openAlert(err.response.data.error.description, this);
+      }
+      this.submit.disabled = false;
+    };
+
+    formStoreProductEdit.addEventListener('submit', handleFormStoreProductEditSubmit);
+    // End Form Edit
+
+    const handleDelete = async function(e) {
+      e.preventDefault();
+
+      if (!confirm('Are you sure you want to delete this?'))
+        return;
+
+      let form = this.closest('form');
+
+      this.disabled = true;
+      try {
+        const item = await remove('{{ base_url }}/stores/{{ store.id }}/products/delete', { id: form.id.value });
+
+        response = response.filter((data, index) => {
+          if (data.id === item.id) {
+            // Delete the UI
+            document.querySelectorAll('.store-products .col-md-4')[index].remove();
+
+            // Update the UI
+            masonry.reloadItems();
+            masonry.layout();
+
+            return false;
+          }
+
+          return true;
+        });
+
+        // If there is no response
+        if (response.length === 0)
+          addNoItem(storeProducts);
+
+        bootstrap.Modal.getInstance(modalStoreProductEdit)?.hide();
+      }
+      catch(err) {
+        handleError(err);
+      }
+      this.disabled = false;
+    };
+
+    btnDelete.addEventListener('click', handleDelete);
+
+    // Form Search
+    let url = '{{ base_url }}/stores/{{ store.id }}/products?q=';
+
+    const handleFormSearchSubmit = async function(e) {
+      e.preventDefault();
+
+      let query = encodeURI(this.q.value);
+      url = `${this.action}?q=${query}`;
+
+      await fetch(url, storeProducts, renderItem);
+    };
+
+    formSearch.addEventListener('submit', handleFormSearchSubmit);
+    // End Form Search
+
+    const renderItem = item => {
+      storeProducts.querySelector('.no-item')?.remove();
+
+      let div = document.createElement('div');
+      div.className = "col-md-4 col-lg-3 mb-4";
+      let template = `
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">
+              <h5 class="my-0">${item.brand === '' ? 'Generic' : item.brand}</h5>
+              <p class="card-text text-muted">
+                <span>${item.description}</span>
+                <span class="badge rounded-pill bg-info">${item.unit}</span> 
+              </p>
+            </div>
+            <p class="card-text m-0">
+              <small class="text-muted">— ${item.category}</small>
+            </p>
+            <p class="h4 unit_cost text-center my-2">₱ ${item.unit_cost}</p>
+            <div class="text-right">
+              <a href="#" class="btn btn-light text-primary" role="button" data-id="${item.id}" data-product="${item.description} (${item.unit})" data-unit_cost="${item.unit_cost.replace(',', '')}" data-toggle="modal" data-target="#modal-store-product-edit">Edit</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      div.innerHTML = template;
+      storeProducts.appendChild(div);
+
+      masonry.appended(div);
+      masonry.layout();
+    };
+
+    fetch(url, storeProducts, renderItem);
+    
+    const fillDataList = async (url, dataList) => {
+      datalistProductItems = [];
+      dataList.innerHTML = "";
+
+      try {
+        const response = await axios.get(url);
+        const items = await response.data.data.sub;
+        datalistProducts = items;
+
+        items.forEach(item => {
+          datalistProductItems.push(`${item.description} (${item.unit})`);
+
+          let template = `
+            <option value="${item.description} (${item.unit})">${item.brand}</option>
+          `;
+
+          dataList.innerHTML += template;
+        });
+
+        // Add constraints to the inclusion function validation
+        constraints.product.inclusion.within = datalistProductItems;
+      }
+      catch(err) {
+        handleError(err);
+      }
+    };
+
+    fillDataList('{{ base_url }}/products?q=&mode=all', products);
+
+    window.addEventListener('scroll', () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        scroll(url, renderItem);
+      }
+    });
+  </script>
+{% endblock %} 

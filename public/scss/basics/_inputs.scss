@@ -1,0 +1,25 @@
+.input-rounded-with-icon {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 .75rem;
+  border-radius: 50rem;
+  background: $white;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.12);
+  color: $gray;
+  transition: all .5s;
+
+  &:focus-within {
+    color: $blue;
+    box-shadow: 0 0 10px -2px rgba(30, 144, 255, 0.5);
+  }
+
+  input {
+    width: 100%;
+    padding: .5rem;
+
+    &::placeholder {
+      color: $gray;
+    }
+  }
+}

@@ -1,0 +1,67 @@
+.header {
+  padding: 1rem;
+  background: $white;
+  position: sticky;
+  top: 0;
+  width: 75%;
+
+  .banner-logo {
+    width: auto;
+    height: 40px;
+  }
+
+  &-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .user {
+      position: relative;
+
+      &:hover {
+        & > .user-dropdown {
+          opacity: 1;
+          pointer-events: all;
+        }
+      }
+
+      &-name {
+        cursor: pointer;
+      }
+
+      &-dropdown {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 200px;
+        background: $white;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.12);
+        opacity: 0;
+        pointer-events: none;
+        transition: all .5s;
+
+        .cash-remaining {
+          padding: 1rem;
+          background: #f3f3f3;
+          text-align: center;
+
+          p {
+            font-size: 1.5rem;
+            color: $gray;
+          }
+        }
+
+        a {
+          display: block;
+          padding: .5rem .75rem;
+          
+          &:hover {
+            background: $white-100;
+          }
+        }
+      }
+    }
+  }
+}

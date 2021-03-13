@@ -1,0 +1,368 @@
+{% extends "/layouts/main.html.twig" %}
+
+{% block title %}
+  My Account
+{% endblock %}
+
+{% block main %}
+  <div class="container">
+    <h1 class="h2">My Profile</h1>
+    <p class="text-muted">Feel free to modify your personal information.</p>
+
+    <div class="row">
+      <div class="col-md-6 col-lg-7 mb-4">
+        <div class="card card-profile">
+          
+          <!-- General Information -->
+          <div class="card-body card-profile-body">
+            <img 
+              src=""
+              width="150"
+              height="150"
+              id="profile_img"
+              class="rounded-circle"
+              style="object-fit: cover; object-position: center"
+            >
+            <div id="general-info" class="general collapse show px-md-2">
+              <h4 class="m-0" id="label-name">John Smith</h4>
+              <p class="card-text text-muted" id="label-username">— @johnsmith</p>
+            </div>
+            <div id="alert" class="mt-2"></div>
+            <a 
+              href="#" 
+              class="btn btn-light btn-toggle text-primary"
+              role="button"
+              data-toggle="collapse"
+              data-target=".general"
+              aria-controls="general-info general-form"
+              onclick="toggleText(this, 'Edit Profile')"
+            >
+              Edit Profile
+            </a>
+            <form action="{{ base_url }}/profile/general" method="POST" id="general-form" name="general" class="general collapse px-md-2" enctype="multipart/form-data" novalidate>
+              <div class="card-title">
+                <h5 class="m-0">General Information</h5>
+                <p class="card-text">
+                  <small class="text-muted">Change your personal information.</small>
+                </p>
+              </div>
+              <input type="hidden" name="id" class="id">
+              <div class="mb-2">
+                <label for="profile_picture" class="form-label">Profile picture</label>
+                <div class="form-file">
+                  <input type="file" class="form-file-input" id="profile_picture" name="profile_picture" accept="image/*">
+                  <label class="form-file-label" for="profile_picture">
+                    <span class="form-file-text">Upload image...</span>
+                    <span class="form-file-button">Browse</span>
+                  </label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6 mb-2">
+                  <label for="first_name" class="form-label">First name</label>
+                  <input type="text" id="first_name" name="first_name" class="form-control" placeholder="Johnny">
+                </div>
+                <div class="col-lg-6 mb-2">
+                  <label for="last_name" class="form-label">Last name</label>
+                  <input type="text" id="last_name" name="last_name" class="form-control" placeholder="Smith">
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <div class="form-check mr-2">
+                  <input type="radio" id="male" class="form-check-input" name="sex" value="1" checked>
+                  <label for="male" class="form-check-label">Male</label>
+                </div>
+                <div class="form-check">
+                  <input type="radio" id="female" class="form-check-input" name="sex" value="0">
+                  <label for="female" class="form-check-label">Female</label>
+                </div>
+              </div>
+              <div class="text-right mt-4">
+                <button type="submit" name="submit" class="btn btn-primary"><i class="las la-spinner la-spin la-1x mr-2"></i>Save Changes</button>
+              </div>
+            </form>
+          </div>
+          <!-- End of General Information -->
+
+          <div class="dropdown-divider"></div>
+
+          <!-- Login Credentials -->
+          <div class="card-body">
+            <div class="px-md-2">
+              <div class="card-title">
+                <h5 class="m-0">Login Credentials</h5>
+                <p class="card-text">
+                  <small class="text-muted">Modify your user credentials.</small>
+                </p>
+              </div>
+              <a 
+                href="#" 
+                class="btn btn-light btn-toggle text-primary" 
+                data-toggle="collapse"
+                data-target="#credential-form"
+                role="button"
+                aria-expanded="false" 
+                aria-controls="credential-form"
+                onclick="toggleText(this, 'Change Password')"
+              >
+                Change Password
+              </a>
+              <form action="{{ base_url }}/profile/credentials" method="POST" class="row collapse" name="credentials" id="credential-form" novalidate>
+                <input type="hidden" name="id" class="id">
+                <div class="col-lg-6 mb-2">
+                  <label for="username" class="form-label">Username</label>
+                  <input type="text" id="username" class="form-control" name="username" placeholder="Username" aria-label="Username">
+                </div>
+                <div class="w-100"></div>
+                <div class="col-lg-6 mb-2">
+                  <label for="password" class="form-label">Password</label>
+                  <div class="input-group">
+                    <input type="password" id="password" name="password" class="form-control password password-random border-right-0" placeholder="Saicao29" aria-label="Password">
+                    <span class="input-group-text bg-white">
+                      <i class="las la-eye-slash btn-toggle-password m-0"></i>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-lg-6 mb-2">
+                  <label for="password_confirm" class="form-label">Confirm Password</label>
+                  <input type="password" id="password_confirm" name="password_confirm" class="form-control password password-random" placeholder="Saicao29" aria-label="Confirm Password">
+                </div>
+                <div class="text-right mt-4">
+                  <button type="submit" name="submit" class="btn btn-primary"><i class="las la-spinner la-spin la-1x mr-2"></i>Save Changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!-- End of Login Credentials -->
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-5 mb-4">
+
+        <!-- User Permissions -->
+        <div class="card">
+          <div class="card-body">
+            <div class="card-title">
+              <h5 class="m-0">User Permissions</h5>
+              <p class="card-text">
+                <small class="text-muted">Permissions that the you have.</small>
+              </p>
+            </div>
+            <div class="dropdown-divider"></div>
+            <label class="form-label">Modules</label>
+            <div class="row modules"></div>
+          </div>
+        </div>
+        <!-- End of User Permissions -->
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script src="/js/helpers/form-password.js"></script>
+  <script>
+    const formGeneral = document.forms.general;
+    const formCredentials = document.forms.credentials;
+
+    validate.validators.presence.message = "must not be left empty."
+    const constraintsGeneral = {
+      first_name: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      last_name: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      sex: {
+        presence: true
+      }
+    }
+
+    const constraintsCredentials = {
+      username: {
+        presence: {
+          allowEmpty: false
+        },
+        length: {
+          minimum: 4,
+          maximum: 20
+        },
+        format: {
+          pattern: "[a-z0-9_]+",
+          flags: "i",
+          message: "can only contain a-z, 0-9, and underscore"
+        }
+      },
+      password: {
+        length: {
+          minimum: 8,
+          maximum: 32
+        }
+      },
+      password_confirm: {
+        equality: {
+          attribute: "password",
+          message: "^The passwords does not match"
+        }
+      }
+    };
+
+    const handleFormGeneralSubmit = async function(e)
+    {
+      e.preventDefault();
+
+      closeAlert();
+      let errors = validate(this, constraintsGeneral, {format: 'flat'});
+      showError(errors || []);
+
+      if (errors)
+        return false;
+
+      this.submit.disabled = true;
+      try {
+        let formData = new FormData(this);
+        
+        let user = JSON.parse(localStorage.getItem('user'));
+        if (user.picture) {
+          formData.append('picture_id', user.picture.id);
+        }
+
+        formData.append('_METHOD', 'PATCH');
+        // const res = await update(this.action, formData);
+
+        const res = await axios.post(this.action, formData);
+        const data = await res.data.data;
+
+        toast(data.message);
+
+        this.reset();
+        this.querySelector('.form-file-text').innerText = "Upload image...";
+        localStorage.setItem('user', JSON.stringify(data.sub));
+        populateHeader();
+        populateProfile();
+      }
+      catch(err) {
+        error(err);
+      }
+      this.submit.disabled = false;
+    };
+
+    const handleFormCredentialsSubmit = async function(e)
+    {
+      e.preventDefault();
+
+      closeAlert();
+      let errors = validate(this, constraintsCredentials, {format: 'flat'});
+      showError(errors || []);
+
+      if (errors)
+        return false;
+
+      this.submit.disabled = true;
+      try {
+        const res = await update(this.action, {
+          id: this.id.value,
+          username: this.username.value,
+          password: this.password.value,
+        });
+
+        localStorage.setItem('user', JSON.stringify(res));
+        populateHeader();
+        populateProfile();
+      }
+      catch(err) {
+      }
+      this.submit.disabled = false;
+    };
+
+    formGeneral.addEventListener('submit', handleFormGeneralSubmit);
+    formCredentials.addEventListener('submit', handleFormCredentialsSubmit);
+
+    const populateProfile = () => 
+    {
+      let user = JSON.parse(localStorage.getItem('user'));
+      document.getElementById('label-name').innerText = `${user.first_name} ${user.last_name}`;
+      document.getElementById('label-username').innerText = `— ${user.username}`;
+      let ids = document.querySelectorAll('.id');
+      
+      for (let i = 0; i < ids.length; ++i) {
+        ids[i].value = user.id;
+      }
+
+      let permissions = "";
+      user.permissions.split(',').forEach(item => {
+        permissions += `
+          <span class="col-md-6">
+            <small class="text-muted">— ${item[0].toUpperCase()}${item.substr(1)}</small>
+          </span>
+        `;
+      });
+      document.querySelector('.modules').innerHTML = permissions;
+
+      document.getElementById('profile_img').src = user.picture ? `{{ base_url }}/uploads/${user.picture.file_name}` : `{{ base_url }}/img/${user.sex == '1' ? 'icon-male.png' : 'icon-female.png'}`;
+      document.getElementById('first_name').value = user.first_name;
+      document.getElementById('last_name').value = user.last_name;
+      document.querySelector(`input[name="sex"][value="${user.sex}"]`).checked = true;
+      document.getElementById('username').value = user.username;
+    };
+
+    if (localStorage.getItem('user') === null) {
+      window.location.reload();
+    }
+
+    populateProfile();
+
+    const handleImagePreview = (input) => 
+    {
+      if (input.files && input.files[0]) {
+        let fileChunk = input.files[0].name.split('.');
+        let fileExtension = fileChunk[fileChunk.length - 1].toLowerCase();
+        let validExtensions = ['jpg', 'jpeg', 'png'];
+
+        if (validExtensions.indexOf(fileExtension) === -1) {
+          closeAlert();
+          showError(['Choose valid image format. (.jpg, .jpeg, .png)']);
+
+          return false;
+        }
+
+        if (input.files[0].size > 10240000) {
+          closeAlert();
+          showError(['Image size must not exceed 10mb.']);        
+
+          return false;
+        }
+
+        let reader = new FileReader();
+        let imageHolder = document.getElementById('profile_img');
+        let fileLabel = document.querySelector('.form-file-text');
+
+        reader.addEventListener('load', function(e) {
+          imageHolder.src = e.target.result;
+          fileLabel.innerText = input.files[0].name;
+        }, false);
+
+        reader.readAsDataURL(input.files[0]);
+      }
+    };
+
+    const file = document.getElementById('profile_picture');
+    file.addEventListener('change', function() {
+      handleImagePreview(this);
+    });
+
+  </script>
+{% endblock %}

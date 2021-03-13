@@ -1,0 +1,86 @@
+{% extends "/layouts/base.html" %}
+
+{% block title %}
+  Sign in
+{% endblock %}
+
+{% block content %}
+  <header class="navbar navbar-light sticky-top">
+    <div class="container">
+      <img
+        class="banner-logo" 
+        width="200"
+        src="/img/logo-banner.png" 
+        alt="Arxmedica Banner">
+    </div>
+  </header>
+  <main class="mt-4">
+    <div class="container">
+      <div class="row pt-4">
+        <form action="{{ base_url }}/auth" method="POST" class="pt-4 col-md-6 col-lg-4 mx-auto" novalidate>
+          <div class="text-center mb-4">
+            <h1 class="h2 m-0">Welcome back!</h1>
+            <h2 class="h3 mb-4">We are happy to see you.</h2>
+            <p class="text-secondary">Please sign in your account.</p>
+          </div>
+
+          <div id="alert"></div>
+
+          <div class="input-group mb-2">
+            <span class="input-group-text bg-light" id="username-icon"><i class="las la-user m-0"></i></span>
+            <input type="text" class="form-control" name="username" placeholder="Username" aria-label="Username" aria-describedby="username-icon">
+          </div>
+          <div class="input-group mb-2">
+            <span class="input-group-text bg-light" id="password-icon"><i class="las la-lock m-0"></i></span>
+            <input type="password" class="form-control password border-right-0" name="password" placeholder="Password" aria-label="Password" aria-describedby="password-icon">
+            <span class="input-group-text bg-white">
+              <i class="las la-eye-slash btn-toggle-password m-0"></i>
+            </span>
+          </div>
+          <div class="text-center my-4">
+            <a 
+              href="/register" 
+              class="link-primary">Don't have an account?</a>
+          </div>
+          <button
+            class="btn btn-block btn-success" 
+            type="submit"
+            name="submit"><i class="las la-spinner la-spin la-1x mr-2"></i>Log in</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  <div class="background">
+    <div class="background-overlay"></div>
+    <img src="/img/bg-landscape.jpg" alt="">
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script src="/js/helpers/form-password.js"></script>
+  <script>
+    const form = document.querySelector('form');
+
+    const handleFormSubmit = async function(e)
+    {
+      e.preventDefault();
+      
+      this.submit.disabled = true;
+      await axios.post('{{ base_url }}/auth', {
+        username: this.username.value,
+        password: this.password.value
+      })
+        .then(res => success(res))
+        .catch(err => openAlert(err.response.data.error.description));
+
+      this.submit.disabled = false;
+    };
+
+    form.addEventListener('submit', handleFormSubmit);
+
+    function success(res) {
+      localStorage.setItem('user', JSON.stringify(res.data.data.sub.user));
+      window.location.href = `{{ base_url }}/analytics`;
+    }
+  </script>
+{% endblock %}

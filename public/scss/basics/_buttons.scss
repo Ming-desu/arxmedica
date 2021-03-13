@@ -1,0 +1,22 @@
+.btn {
+  padding: .5rem .75rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all .5s;
+  text-transform: uppercase;
+  font-weight: 600;
+
+  &-block {
+    display: block;
+    width: 100%;
+  }
+
+  &-primary {
+    background: $green;
+    color: $white;
+
+    &:hover {
+      background: $green-100;
+    }
+  }
+}

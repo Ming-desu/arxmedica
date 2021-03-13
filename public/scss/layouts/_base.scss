@@ -1,0 +1,37 @@
+main.login, main.register {
+  .background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    filter: blur(2px);
+
+    &-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: $white;
+      opacity: .75;
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      object-position: center;
+      object-fit: cover;
+    }
+  }
+}
+
+main.app {
+  display: flex;
+  align-items: flex-start;
+
+  header {
+    margin: 0 0 0 25%;
+  }
+}

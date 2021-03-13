@@ -1,0 +1,50 @@
+nav {
+  background: $white;
+  width: 25%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  .nav-items {
+    padding: 6rem 0;
+
+    .nav-item {
+      position: relative;
+
+      &:hover {
+        
+        & > .nav-item-dropdown {
+          transform: scaleY(1);
+          max-height: unset;
+        }
+      }
+
+      &-dropdown {
+        transform-origin: top center;
+        transition: all .5s;
+        transform: scaleY(0);
+        max-height: 0;
+      }
+
+      a {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        padding: .75rem 2rem;
+        color: $darkGray;
+        transition: all .5s;
+
+        &:hover:not(.nav-item-active) {
+          background: $white-100;
+        }
+        
+        i {
+          margin: 0 2rem 0 0;
+          font-size: 1.5rem;
+          color: $green;
+        }
+      }
+    }
+  }
+}

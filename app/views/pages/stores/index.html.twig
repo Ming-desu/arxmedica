@@ -1,0 +1,104 @@
+{% extends "/layouts/main.html.twig" %}
+
+{% block title %}
+  Stores
+{% endblock %}
+
+{% block main %}
+  <div class="container">
+    <div class="row mb-4 align-items-center g-2">
+      <div class="col-md-7">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="h2 my-0">Store List</h1>
+          <a href="{{ base_url }}/stores/new" class="btn btn-success d-flex align-items-center">
+            <i class="las la-plus mr-2"></i>
+            <span>New</span>
+          </a>
+        </div>
+      </div>
+      <form action="{{ base_url }}/stores" id="form-search" class="input-group col">
+        <input type="text" class="form-control" placeholder="Search something..." name="q" aria-label="Search" aria-describedby="search-button">
+        <button type="submit" class="btn btn-secondary d-flex align-items-center" id="search-button"><i class="las la-search m-0 d-block"></i></button>
+      </form>
+    </div>
+
+    <div class="data-cards">
+      <div class="row stores"></div>
+      <div class="loading d-none">
+        <h5>Loading...</h5>
+        <p><i class="las la-spinner la-spin la-2x m-0"></i></p>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script>
+    const stores = document.querySelector('.stores');
+    const masonry = new Masonry(stores, {
+      percentPosition: true,
+      horizontalOrder: true
+    });
+    const formSearch = document.getElementById('form-search');
+
+    let url = '{{ base_url }}/stores?q=';
+
+    const handleFormSubmit = async function(e) {
+      e.preventDefault();
+
+      let query = encodeURI(this.q.value);
+      url = `{{ base_url }}/stores?q=${query}`;
+
+      await fetch(url, stores, renderItem);
+    };
+    
+    const renderItem = (item) => {
+      stores.querySelector('.no-item')?.remove();
+
+      let div = document.createElement('div');
+      div.className = "col-md-4 col-lg-3 mb-4";
+      let template = `
+        <div class="card">
+          <div class="card-img d-none">
+            <div class="card-img-overlay"></div>
+            <img src="/img/store-1.jpg" alt="">
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              <h5>${item.name}</h5>
+              <p class="card-text text-muted d-flex">
+                <i class="las la-map-marker la-1x mt-1 mr-2"></i>
+                <small>${item.address.street}, ${item.address.municipality}, ${item.address.province}</small>
+              </p>
+            </div>
+            <div class="dropdown-divider my-3"></div>
+            <div class="mb-2">
+              <h6 class="my-0">${item.personnel.first_name} ${item.personnel.last_name}</h6>
+              <p class="card-text">
+                <small class="text-muted"><i class="las la-phone la-1x mr-2"></i>${item.personnel.contact_number || 'No contact number'}</small>
+              </p>
+            </div>
+            <div class="text-right">
+              <a href="{{ base_url }}/stores/${item.id}/view" class="btn btn-light text-primary">View store</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      div.innerHTML = template;
+      stores.appendChild(div);
+
+      masonry.appended(div);
+      masonry.layout();
+    };
+
+    formSearch.addEventListener('submit', handleFormSubmit);
+    fetch(url, stores, renderItem);
+
+    window.addEventListener('scroll', () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        scroll(url, renderItem);
+      }
+    });
+  </script>
+{% endblock %}

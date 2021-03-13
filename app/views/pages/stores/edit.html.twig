@@ -1,0 +1,210 @@
+{% extends "/layouts/main.html.twig" %}
+
+{% block title %}
+  Stores
+{% endblock %}
+
+{% block main %}
+  <div class="container">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h1 class="h2">Edit existing store</h1>
+        <p class="text-muted">Fill up all the required fields.</p>
+      </div>
+      <form action="{{ base_url }}/stores/delete" method="POST" name="delete">
+        <input type="hidden" name="id" value="{{ store.id }}">
+        <input type="hidden" name="personnel_id" value="{{ store.personnel.id }}">
+        <input type="hidden" name="address_id" value="{{ store.address.id }}">
+        <button type="submit" class="btn btn-danger" name="submit"><i class="las la-spinner la-spin la-1x mr-2"></i>Delete</button>
+      </form>
+    </div>
+    <form action="{{ base_url }}/stores/update" method="POST" class="row" name="update" novalidate>
+      <input type="hidden" name="id" value="{{ store.id }}">
+      <input type="hidden" name="personnel_id" value="{{ store.personnel.id }}">
+      <input type="hidden" name="address_id" value="{{ store.address.id }}">
+      <div class="col-md-6 col-lg-7 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="m-0">Personnel Information</h5>
+            <p class="card-text">
+              <small class="text-muted">The person to contact in case of any concerns regarding the shop.</small>
+            </p>
+            <div id="alert"></div>
+            <div class="row">
+              <div class="col-lg-6 mb-2">
+                <label for="first_name" class="form-label">First name</label>
+                <input type="text" id="first_name" class="form-control" name="first_name" placeholder="Johnny" value="{{ store.personnel.first_name }}">
+              </div>
+              <div class="col-lg-6 mb-2">
+                <label for="last_name" class="form-label">Last name</label>
+                <input type="text" id="last_name" class="form-control" name="last_name" placeholder="Smith" value="{{ store.personnel.last_name }}">
+              </div>
+              <div class="col-lg-4 mb-2">
+                <label for="contact" class="form-label">Contact number</label>
+                <input type="text" id="contact" class="form-control" name="contact_number" placeholder="0961-xxxx-xxx" value="{{ store.personnel.contact_number }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-5 mb-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="m-0">Store Information</h5>
+            <p class="card-text">
+              <small class="text-muted">Where the store currently located?</small>
+            </p>
+            <div class="mb-2">
+              <label for="store_name" class="form-label">Store name</label>
+              <input type="text" id="store_name" class="form-control" name="name" placeholder="Johnny's Store" value="{{ store.name }}">
+            </div>
+            <div class="mb-2">
+              <label for="store_address_details" class="form-label">Address details</label>
+              <input type="text" id="store_address_details" class="form-control" name="street" placeholder="#12 Bago St. San Isidro" value="{{ store.address.street }}">
+            </div>
+            <div class="row">
+              <div class="col-lg-6 mb-2">
+                <label for="store_municipality" class="form-label">Municipality/City</label>
+                <input type="text" id="store_municipality" class="form-control" name="municipality" placeholder="Balintawak" value="{{ store.address.municipality }}">
+              </div>
+              <div class="col-lg-6 mb-2">
+                <label for="store_province" class="form-label">Province</label>
+                <input type="text" id="store_province" class="form-control" name="province" placeholder="Quezon" value="{{ store.address.province }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-right">
+        <a href="{{ base_url }}/stores" class="btn btn-light mr-2">Cancel</a>
+        <button type="submit" class="btn btn-primary" name="submit"><i class="las la-spinner la-spin la-1x mr-2"></i>Save Changes</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script>
+    const formUpdate = document.forms.update;
+    const formDelete = document.forms.delete;
+
+    validate.validators.presence.message = "must not be left empty.";
+    const constraints = {
+      first_name: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      last_name: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      contact_number: {
+        format: {
+          pattern: "[0-9]+",
+          message: "can only contain 0-9"
+        }
+      },
+      name: {
+        presence: {
+          allowEmpty: false
+        }
+      },
+      street: {
+        presence: {
+          allowEmpty: false
+        }
+      },
+      municipality: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      province: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      }
+    };
+    
+    const handleFormSubmit = async function(e) {
+      e.preventDefault();
+
+      closeAlert();
+      let errors = validate(this, constraints, {format: 'flat'});
+      showError(errors || []);
+
+      if (!errors) {
+        this.submit.disabled = true;
+        try {
+          const res = await update(this.action, {
+            id: this.id.value,
+            personnel_id: this.personnel_id.value,
+            address_id: this.address_id.value,
+            first_name: this.first_name.value,
+            last_name: this.last_name.value,
+            contact_number: this.contact_number.value,
+            name: this.name.value,
+            street: this.street.value,
+            municipality: this.municipality.value,
+            province: this.province.value
+          });
+
+          this.reset();
+
+          window.location.href = '{{ base_url }}/stores';
+        }
+        catch(err) {}
+        this.submit.disabled = false;
+      }
+    };
+
+    formUpdate.addEventListener('submit', handleFormSubmit);
+
+    const handleDelete = async function(e) {
+      e.preventDefault();
+
+      if (!confirm('Are you sure you want to delete this?'))
+        return;
+
+      this.submit.disabled = true;
+      try {
+        const item = await remove(this.action, {
+          id: this.id.value,
+          personnel_id: this.personnel_id.value,
+          address_id: this.address_id.value
+        });
+
+        window.location.href = '{{ base_url }}/stores';
+      }
+      catch(err) {
+        handleError(err);
+      }
+      this.submit.disabled = false;
+    }
+
+    formDelete.addEventListener('submit', handleDelete);
+
+  </script>
+{% endblock %}

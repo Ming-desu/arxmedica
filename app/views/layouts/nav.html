@@ -1,0 +1,127 @@
+<nav id="sideBarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+  <div class="position-sticky py-3">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a 
+          href="/analytics" 
+          class="nav-link {{ route_name in ['analytics.index'] ? 'active' : '' }}"
+        >
+          <i class="las la-chart-bar"></i>
+          <span>Analytics</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a 
+          href="#" 
+          class="nav-link {{ route_name in ['stores.index', 'stores.create', 'stores.edit', 'stores.view'] ? 'active' : '' }}" 
+          role="button" 
+          data-toggle="collapse"
+          data-target="#stores"
+          aria-expanded="false" 
+          aria-controls="stores"
+        >
+          <i class="las la-store-alt"></i>
+          <span>Stores</span>
+        </a>
+        <div class="collapse" id="stores">
+          <a href="/stores" class="nav-link">
+            <span>Manage Stores</span>
+          </a>
+          <a href="/stores/new" class="nav-link">
+            <span>Add Store</span>
+          </a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a 
+          href="#" 
+          class="nav-link {{ route_name in ['products.index', 'products.create', 'products.edit', 'products.categories.index', 'products.units.index'] ? 'active' : '' }}" 
+          role="button" 
+          data-toggle="collapse"
+          data-target="#products"
+          aria-expanded="false" 
+          aria-controls="products"
+        >
+          <i class="las la-box"></i>
+          <span>Inventory</span>
+        </a>
+        <div class="collapse" id="products">
+          <a href="/products" class="nav-link">
+            <span>Manage Products</span>
+          </a>
+          <a href="/products/new" class="nav-link">
+            <span>Add Product</span>
+          </a>
+          <a href="/products/categories" class="nav-link">
+            <span>Manage Categories</span>
+          </a>
+          <a href="/products/units" class="nav-link">
+            <span>Manage Units</span>
+          </a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a 
+          href="/quotations" 
+          class="nav-link {{ route_name in ['quotations.index', 'quotations.create', 'quotations.edit'] ? 'active' : '' }}"
+        >
+          <i class="las la-shopping-cart"></i>
+          <span>Quotations</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a 
+          href="/expenses" 
+          class="nav-link {{ route_name in ['expenses.index'] ? 'active' : '' }}"
+        >
+          <i class="las la-money-bill-wave"></i>
+          <span>Expenses</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a 
+          href="#" 
+          class="nav-link {{ route_name in ['accounts.index', 'accounts.create', 'accounts.edit'] ? 'active' : '' }}" 
+          role="button"
+          data-toggle="collapse"
+          data-target="#accounts" 
+          aria-expanded="false" 
+          aria-controls="accounts"
+        >
+          <i class="las la-user"></i>
+          <span>Accounts</span>
+        </a>
+        <div class="collapse" id="accounts">
+          <a href="/accounts" class="nav-link">
+            <span>Manage Accounts</span>
+          </a>
+          <a href="/accounts/new" class="nav-link">
+            <span>Add Account</span>
+          </a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a 
+          href="#" 
+          class="nav-link {{ route_name in ['settings.index', 'settings.my-account'] ? 'active' : '' }}"
+          data-toggle="collapse"
+          data-target="#settings"
+          role="button"
+          aria-expanded="false"
+          aria-controls="settings"
+        >
+          <i class="las la-cog"></i>
+          <span>Settings</span>
+        </a>
+        <div class="collapse" id="settings">
+          <a href="/settings" class="nav-link">
+            <span>Manage Settings</span>
+          </a>
+          <a href="/profile" class="nav-link">
+            <span>My Account</span>
+          </a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>

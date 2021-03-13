@@ -1,0 +1,175 @@
+{% extends "/layouts/base.html" %}
+
+{% block title %}
+  Sign up
+{% endblock %}
+
+{% block content %}
+  <header class="navbar navbar-light sticky-top">
+    <div class="container">
+      <img
+        class="banner-logo"
+        width="200" 
+        src="/img/logo-banner.png" 
+        alt="Arxmedica Banner">
+    </div>
+  </header>
+  <main>
+    <div class="container">
+      <div class="row">
+        <form action="{{ base_url }}/register" method="POST" class="pt-4 col-md-7 col-lg-5 mx-auto" novalidate>
+          <div class="text-center mb-4">
+            <h1 class="h2">Hello there!</h1>
+            <p class="text-secondary">Create your account now or <a href="/login" class="link-primary">login</a>.</p>  
+          </div>
+
+          <div id="alert"></div>
+
+          <h5 class="h6">Personal Information</h5>
+          <div class="row mb-2">
+            <div class="col">
+              <input type="text" class="form-control" name="first_name" placeholder="First name" aria-label="First name">
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" name="last_name" placeholder="Last name" aria-label="Last name">
+            </div>
+          </div>
+          <div class="d-flex justify-content-end mb-2">
+            <div class="form-check mr-2">
+              <input type="radio" class="form-check-input" name="sex" id="male" value="1" checked>
+              <label for="male" class="form-check-label">Male</label>
+            </div>
+            <div class="form-check">
+              <input type="radio" class="form-check-input" name="sex" id="female" value="0">
+              <label for="female" class="form-check-label">Female</label>
+            </div>
+          </div>
+          <h5 class="h6">Account Information</h5>
+          <div class="mb-2">
+            <input type="text" class="form-control" name="username" placeholder="Username" aria-label="Username">
+          </div>
+          <div class="row mb-4">
+            <div class="input-group col">
+              <input type="password" class="form-control password border-right-0" name="password" placeholder="Password" aria-label="Password">
+              <span class="input-group-text bg-white">
+                <i class="las la-eye-slash btn-toggle-password m-0"></i>
+              </span>
+            </div>
+            <div class="col">
+              <input type="password" class="form-control password" name="password_confirm" placeholder="Confirm Password" aria-label="Confirm Password">
+            </div>
+          </div>
+          <button
+            class="btn btn-block btn-primary" 
+            type="submit"
+            name="submit"
+          ><i class="las la-spinner la-spin la-1x mr-2"></i>Sign up</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  <div class="background">
+    <div class="background-overlay"></div>
+    <img src="/img/bg-landscape.jpg" alt="">
+  </div>
+{% endblock %}
+{% block script %}
+  <script src="/js/helpers/base.js"></script>
+  <script src="/js/helpers/form-password.js"></script>
+  <script>
+    validate.validators.presence.message = "must not be left empty."
+    const constraints = {
+      first_name: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      last_name: {
+        presence: {
+          allowEmpty: false
+        },
+        format: {
+          pattern: "[a-z ]+",
+          flags: "i",
+          message: "can only contain a-z and space"
+        }
+      },
+      sex: {
+        presence: true
+      },
+      username: {
+        presence: {
+          allowEmpty: false
+        },
+        length: {
+          minimum: 4,
+          maximum: 20
+        },
+        format: {
+          pattern: "[a-z0-9_]+",
+          flags: "i",
+          message: "can only contain a-z, 0-9, and underscore"
+        }
+      },
+      password: {
+        presence: {
+          allowEmpty: false
+        },
+        length: {
+          minimum: 8,
+          maximum: 32
+        }
+      },
+      password_confirm: {
+        presence: {
+          allowEmpty: false
+        },
+        equality: {
+          attribute: "password",
+          message: "^The passwords does not match"
+        }
+      }
+    }
+
+    const form = document.querySelector('form');
+
+    const handleFormSubmit = async function(e)
+    {
+      e.preventDefault();
+      
+      let errors = validate(form, constraints, {format: 'flat'});
+      showError(errors || []);
+      
+      if (errors)
+        return false;
+
+      this.submit.disabled = true;
+      await axios.post('{{ base_url }}/register', {
+        first_name: this.first_name.value,
+        last_name: this.last_name.value,
+        sex: this.sex.value,
+        username: this.username.value,
+        password: this.password.value
+      })
+        .then(res => window.location.href = `{{ base_url }}/login`)
+        .catch(err => openAlert(err.response.data.error.description));
+
+      this.submit.disabled = false;
+    };
+
+    form.addEventListener('submit', handleFormSubmit);
+
+    // Hook up the inputs to validate on the fly
+    var inputs = document.querySelectorAll("input, textarea, select")
+    for (var i = 0; i < inputs.length; ++i) {
+      inputs.item(i).addEventListener("change", function(ev) {
+        clearAlert();
+      });
+    }
+  </script>
+{% endblock %}

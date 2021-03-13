@@ -1,0 +1,269 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+}
+
+.background .background-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  opacity: .75;
+}
+
+.background img {
+  width: 100%;
+  height: 100%;
+  object-position: center;
+  object-fit: cover;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 48px 0 0; /* Height of navbar */
+}
+
+i {
+  font-size: 1.25rem;
+  margin: 0 1rem 0 0;
+  transition: transform .3s ease-in;
+}
+
+.row-quotations a[data-toggle="collapse"] > i {
+  transform: rotateZ(180deg);
+}
+
+.collapsed i {
+  transform: rotateZ(0deg) !important;  
+}
+
+#sideBarMenu {
+  overflow-y: auto;
+}
+
+#sideBarMenu::-webkit-scrollbar {
+  width: 4px;
+}
+
+#sideBarMenu::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+}
+ 
+#sideBarMenu::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50rem;
+}
+
+.sidebar .nav-link {
+  color: #9e9e9e;
+  border-radius: 4px;
+}
+
+.sidebar .nav-link:hover {
+  background-color: #ececec;
+  color: #3f3f3f;
+}
+
+.sidebar .nav-link.active {
+  color: #007bff;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+#stores .nav-link,
+#products .nav-link,
+#accounts .nav-link,
+#settings .nav-link {
+  padding-left: 3.5rem;
+  font-size: .75rem;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+.card-img {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  overflow: hidden;
+}
+
+.card-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.25));
+}
+
+.card-img img {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: auto;
+}
+
+.card-profile {
+  margin: 5rem 0 0 0;
+}
+
+.card-profile .card-body,
+.card-company .card-body {
+  position: relative;
+}
+
+.card-profile .card-profile-body {
+  padding-top: 5rem;
+}
+
+.card-profile img {
+  position: absolute;
+  top: 0;
+  left: 1rem;
+  transform: translateY(-50%);
+  border: 4px solid #fff;
+}
+
+.card-body .btn-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.product-items {
+  max-height: 15rem;
+  overflow-x: auto;  
+}
+
+.product-items .card-body:nth-child(even) {
+  background-color: #fff !important;
+}
+
+.product-items::-webkit-scrollbar {
+  width: 4px;
+}
+
+.product-items::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+}
+ 
+.product-items::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50rem;
+}
+
+.quotation-items {
+  max-height: 25rem;
+  overflow-x: auto;
+}
+
+.quotation-items::-webkit-scrollbar {
+  width: 4px;
+}
+
+.quotation-items::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+}
+ 
+.quotation-items::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50rem;
+}
+
+.quotation-item {
+  position: relative;
+}
+
+.quotation-item:hover > .quotation-item-description {
+  padding-right: 2.5rem;
+}
+
+.quotation-item:hover > .quotation-item-actions {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.quotation-item-description {
+  transition: padding .3s ease-in;
+}
+
+.quotation-item-actions {
+  position: absolute;
+  top: 50%;
+  right: .5rem;
+  transform: translateY(-50%);
+  transition: all .3s ease-in;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-with-loading > i,
+input[type="submit"] > i,
+button[type="submit"] > i,
+button[type="button"] > i {
+  display: none;
+}
+
+.btn-with-loading:disabled > i,
+input[type="submit"]:disabled > i, 
+button[type="submit"]:disabled > i, 
+button[type="button"]:disabled > i {
+  display: inline-block;
+}
+
+.toast {
+  min-width: 250px;
+}
+
+.data-cards {
+  position: relative;
+}
+
+.data-cards .loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  text-align: center;
+  padding: 4rem 0 0 0;
+}
+
+.rotate > i {
+  transform: scale(1, -1);
+}
+
+.table tbody tr.odd {
+  background-color: #f7f7f7;
+}
+
+.btn-print::after {
+  content: 'Print';
+}

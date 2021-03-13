@@ -67,8 +67,7 @@ class HttpErrorHandler extends ErrorHandler
     $encodedPayload = json_encode($payload, JSON_PRETTY_PRINT);
     
     $response = $this->responseFactory->createResponse($statusCode);
-    // $response->getBody()->write($encodedPayload);
-    $response->getBody()->write(json_encode(parse_url(getenv('DATABASE_URL'))));
+    $response->getBody()->write($encodedPayload);
 
     return $response->withHeader('Content-Type', 'application/json');
   }

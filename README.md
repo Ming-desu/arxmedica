@@ -35,4 +35,5 @@ Run the database migration
 **Test User Credentials**
 
 Username: `user`
+
 Password: `password`

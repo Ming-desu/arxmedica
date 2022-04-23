@@ -27,3 +27,12 @@ Run the database migration
 **Start server**
 
 `composer start`
+
+**Live Preview**
+
+[https://arxmedica.herokuapp.com](https://arxmedica.herokuapp.com)
+
+**Test User Credentials**
+
+Username: `user`
+Password: `password`
